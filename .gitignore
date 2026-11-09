@@ -1,0 +1,39 @@
+# =========================================================================
+# STM32CubeIDE / Eclipse CDT / GCC ARM .gitignore
+# =========================================================================
+
+# Build directories and outputs
+Debug/
+Release/
+build/
+bin/
+obj/
+
+# Compiler outputs & binaries
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.obj
+*.d
+*.su
+*.s
+*.a
+*.lib
+
+# Eclipse / STM32CubeIDE user-specific files
+.metadata/
+.recommenders/
+*.launch
+
+# OS specific files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor / IDE local configs
+.vscode/
+.idea/
+*.swp
+*~
