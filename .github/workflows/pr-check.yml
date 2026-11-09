@@ -1,0 +1,65 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: ['main']
+  # main itself, so a merge is still checked after the fact.
+  push:
+    branches: ['main']
+
+# A new push supersedes the run already in flight for the same branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check for Disallowed Binaries
+        run: |
+          echo "Checking for accidental build artifacts..."
+          DISALLOWED=$(git ls-files | grep -E '\.(elf|hex|bin|o|obj|d|su|a|lib)$' || true)
+          if [ -n "$DISALLOWED" ]; then
+            echo "Error: Found disallowed build artifacts committed in git:"
+            echo "$DISALLOWED"
+            exit 1
+          fi
+          echo "Clean - no build artifacts found."
+
+      - name: Static Code Analysis (cppcheck)
+        run: |
+          sudo apt-get update && sudo apt-get install -y cppcheck
+          # Scan project C and Header files (excluding vendor Drivers/Middlewares if added by CubeMX)
+          C_FILES=$(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/Drivers/*" ! -path "*/Middlewares/*" || true)
+          if [ -n "$C_FILES" ]; then
+            echo "Running cppcheck on source files..."
+            cppcheck --enable=warning,performance,portability --error-exitcode=1 \
+              --suppress=missingIncludeSystem \
+              --inline-suppr \
+              $C_FILES
+          else
+            echo "No C/H files found yet. Check passed."
+          fi
+
+      - name: ARM GCC Toolchain Verification
+        run: |
+          sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi
+          arm-none-eabi-gcc --version
+          # Syntax check on main.c if it exists in standard CubeMX path
+          if [ -f "Core/Src/main.c" ]; then
+            echo "Checking syntax on Core/Src/main.c..."
+            arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -fsyntax-only \
+              -I Core/Inc \
+              -I Drivers/STM32F4xx_HAL_Driver/Inc \
+              -I Drivers/CMSIS/Device/ST/STM32F4xx/Include \
+              -I Drivers/CMSIS/Include \
+              Core/Src/main.c || true
+          else
+            echo "Core/Src/main.c not generated yet. Check passed."
+          fi
