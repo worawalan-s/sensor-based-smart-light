@@ -12,7 +12,9 @@ The **Smart Touchless Hallway Lighting System** is an energy-efficient and touch
 1. **Ambient Darkness**: The photoresistor detects that ambient illuminance has dropped below a calibrated threshold.
 2. **Obstacle Presence**: The active infrared (IR) sensor detects a person or object in detection range.
 
-Upon trigger, the system energizes the relay to turn on the lamp, initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** if continued presence is detected while the lamp is illuminated. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated lamp fools the light sensor into abruptly turning off).
+Upon a **Qualified Trigger Event**, the system energizes the relay to turn on the lamp, initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** through **Obstacle Presence refresh** while the lamp is illuminated. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated lamp fools the light sensor into abruptly turning off).
+
+> **Prototype safety scope:** This course prototype uses a low-voltage LED/lamp load only. Connecting or testing a mains-powered load is out of scope.
 
 ---
 
@@ -52,12 +54,12 @@ Upon trigger, the system energizes the relay to turn on the lamp, initiating a n
 The system operates using a non-blocking Finite State Machine (utilizing `HAL_GetTick()` for deterministic timing):
 
 ```
-                 Dark + Obstacle Detected
-+--------------+ -------------------------> +----------------+
-|  STATE_IDLE  |                            | STATE_LIGHT_ON |
-+--------------+ <------------------------- +----------------+
-       ^            Optical settle complete          |
-       |                                             | Hold Duration expires
+                    Qualified Trigger Event
++--------------+ -------------------------> +----------------+ <---+
+|  STATE_IDLE  |                            | STATE_LIGHT_ON |     | Obstacle Presence
++--------------+                            +----------------+ ----+ refresh
+       ^                                             |
+       | Optical settle complete                     | Hold Duration expires
        |                                             v
        +----------------------------------- +----------------------+
                                            | STATE_OPTICAL_SETTLE |
@@ -67,7 +69,7 @@ The system operates using a non-blocking Finite State Machine (utilizing `HAL_Ge
 ### Optical Feedback Protection (Light Lockout)
 When the primary lamp is activated, light reflection can strike the LDR sensor, causing measured illuminance to surge and falsely indicating daytime. To eliminate rapid ON/OFF oscillation:
 - While in `STATE_LIGHT_ON`, the system applies **Light Lockout**, suspending LDR state evaluation.
-- The lamp state is governed strictly by the countdown timer (Hold Duration) and proximity retriggering.
+- The lamp state is governed strictly by the countdown timer (Hold Duration) and Obstacle Presence refresh.
 - While Obstacle Presence remains asserted, it refreshes the Hold Duration, so timeout cannot occur until presence clears.
 - Once the hold duration elapses and the relay opens (lamp turns OFF), the system enters `STATE_OPTICAL_SETTLE`; LDR sampling resumes only after the optical settle period. A later Qualified Trigger Event may then activate the lamp again.
 

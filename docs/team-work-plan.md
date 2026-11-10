@@ -14,13 +14,11 @@
 
 ## Team Members and Primary Tracks
 
-Replace `Member A`, `Member B`, and `Member C` with the team’s names and GitHub usernames before work starts.
-
 | Role | Team member | GitHub | Phase progression |
 | :---: | :--- | :--- | :--- |
-| **`A`** | Member A | `@username` | **P1** Hardware contract (#1) → **P3** Hold Duration (#4) → **P2** CI quality gate (#7) |
-| **`B`** | Member B | `@username` | **P2** Safe-off baseline (#2) → **P3** Light Lockout (#5) → **P4** Documentation (#8) |
-| **`C`** | Member C | `@username` | **P3** Automatic activation (#3) → **P4** Calibration (#6) → **P5** Acceptance demo (#9) |
+| **`A`** | Sininant Wiriyakulnant | [`@sininant`](https://github.com/sininant) | **P1** Hardware contract (#1) → **P2** CI quality gate (#7) → **P3** Hold Duration (#4) |
+| **`B`** | Worawalan Samai | [`@worawalan-s`](https://github.com/worawalan-s) | **P2** Safe-off baseline (#2) → **P3** Light Lockout (#5) → **P4** Documentation (#8) |
+| **`C`** | Jiruchya Niamluang | [`@noeyyneo`](https://github.com/noeyyneo) | **P3** Automatic activation (#3) → **P4** Calibration (#6) → **P5** Acceptance demo (#9) |
 
 ---
 

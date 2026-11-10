@@ -1,6 +1,6 @@
 # Smart Lighting System
 
-Automatic hallway illumination system activated conditionally by ambient darkness and obstacle proximity.
+Automatic hallway and room illumination system activated conditionally by ambient darkness and obstacle proximity.
 
 ## Language
 
