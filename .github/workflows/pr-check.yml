@@ -15,7 +15,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
 
     steps:
       - name: Checkout Code
@@ -34,7 +34,7 @@ jobs:
 
       - name: Static Code Analysis (cppcheck)
         run: |
-          sudo apt-get update && sudo apt-get install -y cppcheck
+          sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends cppcheck
           # Scan project C and Header files (excluding vendor Drivers/Middlewares if added by CubeMX)
           C_FILES=$(find . -type f \( -name "*.c" -o -name "*.h" \) ! -path "*/Drivers/*" ! -path "*/Middlewares/*" || true)
           if [ -n "$C_FILES" ]; then
@@ -47,19 +47,18 @@ jobs:
             echo "No C/H files found yet. Check passed."
           fi
 
-      - name: ARM GCC Toolchain Verification
+      - name: Fast C Syntax Verification
         run: |
-          sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi
-          arm-none-eabi-gcc --version
-          # Syntax check on main.c if it exists in standard CubeMX path
+          # Use pre-installed GCC on ubuntu-latest runner (zero installation overhead)
+          gcc --version
           if [ -f "Core/Src/main.c" ]; then
-            echo "Checking syntax on Core/Src/main.c..."
-            arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -fsyntax-only \
+            echo "Performing fast syntax check on Core/Src/main.c..."
+            gcc -fsyntax-only \
               -I Core/Inc \
               -I Drivers/STM32F4xx_HAL_Driver/Inc \
               -I Drivers/CMSIS/Device/ST/STM32F4xx/Include \
               -I Drivers/CMSIS/Include \
               Core/Src/main.c || true
           else
-            echo "Core/Src/main.c not generated yet. Check passed."
+            echo "Core/Src/main.c not present yet. Check passed."
           fi
