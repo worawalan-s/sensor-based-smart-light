@@ -1,4 +1,4 @@
-# 3-Person Team Work Plan & Workflow — Smart Touchless Hallway Lighting System
+# 3-Person Team Work Plan & Workflow — Smart Touchless Lighting System (Low-Voltage Prototype)
 
 - **GitHub Repository**: [worawalan-s/sensor-based-smart-light](https://github.com/worawalan-s/sensor-based-smart-light)
 - **GitHub Issues**: [Issues #1–#7](https://github.com/worawalan-s/sensor-based-smart-light/issues) currently exist; this plan expands the final backlog to **#1–#9**.

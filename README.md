@@ -12,9 +12,9 @@ The **Smart Touchless Hallway Lighting System** is an energy-efficient and touch
 1. **Ambient Darkness**: The photoresistor detects that ambient illuminance has dropped below a calibrated threshold.
 2. **Obstacle Presence**: The active infrared (IR) sensor detects a person or object in detection range.
 
-Upon a **Qualified Trigger Event**, the system energizes the relay to turn on the lamp, initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** through **Obstacle Presence refresh** while the lamp is illuminated. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated lamp fools the light sensor into abruptly turning off).
+Upon a **Qualified Trigger Event**, the system energizes the relay to turn on the low-voltage illumination load (LED or small DC light bulb), initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** through **Obstacle Presence refresh** while the load is energized. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated load fools the light sensor into abruptly turning off).
 
-> **Prototype safety scope:** This course prototype uses a low-voltage LED/lamp load only. Connecting or testing a mains-powered load is out of scope.
+> **Prototype safety scope:** This course prototype operates strictly with a low-voltage LED or DC light bulb. Connecting or testing mains-powered (AC 220V) loads or full hallway/room fixtures is out of scope.
 
 ---
 
@@ -89,6 +89,7 @@ sensor-based-smart-light/
 ├── GLOSSARY.md                         # Ubiquitous domain language definitions
 ├── docs/
 │   ├── agents/                         # Issue-tracker, labels, and domain-doc conventions
+│   ├── team-work-plan.md               # 3-person phases, ownership, and workflow
 │   └── adr/
 │       └── 0001-target-nucleo-f411re.md  # Architectural decision record for MCU selection
 └── (STM32CubeIDE project files: .ioc, Core/, Drivers/ generated via STM32CubeMX)
