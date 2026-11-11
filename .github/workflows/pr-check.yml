@@ -47,13 +47,17 @@ jobs:
             echo "No C/H files found yet. Check passed."
           fi
 
-      - name: Fast C Syntax Verification
+      - name: Setup Arm GNU Toolchain (Cached)
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '13.3.Rel1'
+
+      - name: ARM GCC Toolchain Verification
         run: |
-          # Use pre-installed GCC on ubuntu-latest runner (zero installation overhead)
-          gcc --version
+          arm-none-eabi-gcc --version
           if [ -f "Core/Src/main.c" ]; then
-            echo "Performing fast syntax check on Core/Src/main.c..."
-            gcc -fsyntax-only \
+            echo "Checking syntax on Core/Src/main.c for Cortex-M4 target..."
+            arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -fsyntax-only \
               -I Core/Inc \
               -I Drivers/STM32F4xx_HAL_Driver/Inc \
               -I Drivers/CMSIS/Device/ST/STM32F4xx/Include \
