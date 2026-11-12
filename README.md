@@ -23,6 +23,7 @@ Upon a **Qualified Trigger Event**, the system energizes the relay to turn on th
 | Item | Module Identifier | Description | System Role |
 | :--- | :--- | :--- | :--- |
 | **Microcontroller** | NUCLEO-F411RE | STM32 ARM Cortex-M4 @ 100 MHz development board | Main processor & FSM controller |
+| **Wi-Fi / IoT Bridge** | ESP32-S3-N16R8 | Dual-core Xtensa LX7 MCU with 16MB Flash & 8MB Octal PSRAM | Network telemetry & Remote Override bridge over UART |
 | **No. 29** | KY-032 | Obstacle Avoidance Sensor Module (Active IR) | Proximity / tripwire obstacle detection |
 | **No. 16** | KY-018 | Photoresistor Module (LDR) | Ambient illuminance measurement |
 | **No. 17** | KY-019 | 5V Relay Module | Load switching; the course prototype uses a low-voltage load only |
@@ -46,6 +47,9 @@ Upon a **Qualified Trigger Event**, the system energizes the relay to turn on th
 | **KY-019 (Relay)** | `IN` | `PA4` | GPIO_Output | Active-HIGH (`1` = ON, `0` = OFF) | `[TBD]` |
 | | `VCC` | `5V` | Power | Relay coil drive supply | `[TBD]` |
 | | `GND` | `GND` | Ground | Common Ground with STM32 | `[TBD]` |
+| **ESP32-S3-N16R8** | `GPIO 16` (`Serial1 RX`) | `PA9` (`D8`) | `USART1_TX` (115200 8N1) | 3.3V UART TX → ESP32 RX | `Confirmed` |
+| | `GPIO 17` (`Serial1 TX`) | `PA10` (`D2`) | `USART1_RX` (115200 8N1) | 3.3V UART RX ← ESP32 TX | `Confirmed` |
+| | `GND` | `GND` | Ground | Common Ground (power each board via its own USB) | `Confirmed` |
 
 ---
 
@@ -116,5 +120,7 @@ sensor-based-smart-light/
 
 ## 📚 References & Decisions
 - Domain Glossary: [GLOSSARY.md](GLOSSARY.md)
-- Architectural Decision Records: [docs/adr/0001-target-nucleo-f411re.md](docs/adr/0001-target-nucleo-f411re.md)
+- Architectural Decision Records:
+  - [docs/adr/0001-target-nucleo-f411re.md](docs/adr/0001-target-nucleo-f411re.md)
+  - [docs/adr/0002-esp32-s3-wifi-bridge-uart.md](docs/adr/0002-esp32-s3-wifi-bridge-uart.md)
 - Team Work Plan: [docs/team-work-plan.md](docs/team-work-plan.md)

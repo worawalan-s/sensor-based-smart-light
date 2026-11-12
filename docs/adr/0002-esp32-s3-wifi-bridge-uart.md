@@ -1,0 +1,3 @@
+# Add ESP32-S3-N16R8 as Wi-Fi/IoT Bridge over UART
+
+To add network connectivity (telemetry and remote override) without replacing the course-mandated `NUCLEO-F411RE` FSM controller, we pair an `ESP32-S3-N16R8` with the `STM32F411RE` as a dedicated Wi-Fi/IoT bridge rather than migrating the whole system onto the ESP32. The two 3.3V boards communicate via a non-blocking 115200 bps line-based ASCII protocol over `USART1` (`PA9`/`PA10` on STM32) ↔ `Serial1` (`GPIO 16`/`GPIO 17` on ESP32-S3, avoiding Octal PSRAM pins `GPIO 35–37`), leaving `USART2` free for ST-LINK debugging and avoiding SPI/I2C complexity.

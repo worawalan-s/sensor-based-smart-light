@@ -23,3 +23,7 @@ _Avoid_: Delay time, sleep time
 **Qualified Trigger Event**:
 The simultaneous observation of Ambient Darkness and Obstacle Presence while the illumination load is de-energized. While the load is energized, Obstacle Presence refreshes the Hold Duration rather than creating another trigger event.
 _Avoid_: Motion event, sensor interrupt
+
+**Remote Override**:
+An external command from an operator or networked interface that forces the illumination load on or off independently of local sensor triggers.
+_Avoid_: Manual force, Wi-Fi switch

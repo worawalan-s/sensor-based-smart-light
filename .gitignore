@@ -18,7 +18,6 @@ obj/
 *.obj
 *.d
 *.su
-*.s
 *.a
 *.lib
 
