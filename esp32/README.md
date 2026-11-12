@@ -80,3 +80,16 @@ Reconnect both USB cables and open **two Serial Monitor windows** at **`115200 b
    - **ESP32-S3** receives `[From STM32] ACK:OVERRIDE_ON`.
 3. **Non-blocking & Fault Recovery Check:**
    - Unplug `D2 (PA10)` and plug it back in: `LD2` on the Nucleo must keep blinking steadily without freezing, and `PONG` replies must resume automatically after reconnecting.
+
+---
+
+## 6. Test Results (Verified)
+
+- **Date:** 2026-11-12
+- **Hardware:** `NUCLEO-F411RE` ↔ `ESP32-S3-N16R8` (`USART1 PA9/PA10` ↔ `Serial1 GPIO 16/17` @ `115200 baud`, Common `GND`, separate USB power)
+- **Status:** **PASSED**
+  - `NUCLEO-F411RE` boots cleanly, blinks `LD2` every 200 ms without blocking, and outputs `STM32F411 UART Smoke Test Start` on `USART2` ST-LINK VCP.
+  - Bidirectional UART communication (`PING` / `PONG`, dummy telemetry `STATE:LIGHT_ON,LDR:1200`, and `CMD:OVERRIDE_ON` / `ACK:OVERRIDE_ON`) verified across both Serial Monitors.
+- **Setup Notes Confirmed During Testing:**
+  - On `ESP32-S3-N16R8`, use `GPIO 16` / `GPIO 17` (not the board's `TX`/`RX` `UART0` pins) and set `USB CDC On Boot: Enabled` in Arduino IDE when using the native `USB` port.
+  - Ensure `Core/Startup/startup_stm32f411retx.s` is tracked in Git so the STM32 project links with a valid vector table on any machine.
