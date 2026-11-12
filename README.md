@@ -12,7 +12,9 @@ The **Smart Touchless Hallway Lighting System** is an energy-efficient and touch
 1. **Ambient Darkness**: The photoresistor detects that ambient illuminance has dropped below a calibrated threshold.
 2. **Obstacle Presence**: The active infrared (IR) sensor detects a person or object in detection range.
 
-Upon trigger, the system energizes the relay to turn on the lamp, initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** if continued presence is detected while the lamp is illuminated. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated lamp fools the light sensor into abruptly turning off).
+Upon a **Qualified Trigger Event**, the system energizes the relay to turn on the low-voltage illumination load (LED or small DC light bulb), initiating a non-blocking countdown (**Hold Duration** of 15 seconds default). The timer is **retriggerable** through **Obstacle Presence refresh** while the load is energized. Additionally, the system incorporates an optical **Light Lockout** mechanism to prevent optical feedback oscillation (where the illuminated load fools the light sensor into abruptly turning off).
+
+> **Prototype safety scope:** This course prototype operates strictly with a low-voltage LED or DC light bulb. Connecting or testing mains-powered (AC 220V) loads or full hallway/room fixtures is out of scope.
 
 ---
 
@@ -23,8 +25,8 @@ Upon trigger, the system energizes the relay to turn on the lamp, initiating a n
 | **Microcontroller** | NUCLEO-F411RE | STM32 ARM Cortex-M4 @ 100 MHz development board | Main processor & FSM controller |
 | **No. 29** | KY-032 | Obstacle Avoidance Sensor Module (Active IR) | Proximity / tripwire obstacle detection |
 | **No. 16** | KY-018 | Photoresistor Module (LDR) | Ambient illuminance measurement |
-| **No. 17** | KY-019 | 5V Relay Module | High-voltage / DC load switching |
-| **Load / Power** | - | External lamp load / LED + external power supply | Primary illumination target |
+| **No. 17** | KY-019 | 5V Relay Module | Load switching; the course prototype uses a low-voltage load only |
+| **Load / Power** | - | Low-voltage LED/lamp + external power supply | Primary illumination target for the prototype |
 
 ---
 
@@ -52,22 +54,24 @@ Upon trigger, the system energizes the relay to turn on the lamp, initiating a n
 The system operates using a non-blocking Finite State Machine (utilizing `HAL_GetTick()` for deterministic timing):
 
 ```
-       +---------------------------------------------+
-       |                                             |
-       v                                             |
-+--------------+   Dark + Obstacle Detected   +---------------+
-|  STATE_IDLE  | ---------------------------> | STATE_LIGHT_ON| <---+
-+--------------+                              +---------------+     |
-       ^                                             |              | Obstacle
-       | Timeout Expired (15s)                       | Retrigger    | re-detected
-       +---------------------------------------------+--------------+
+                    Qualified Trigger Event
++--------------+ -------------------------> +----------------+ <---+
+|  STATE_IDLE  |                            | STATE_LIGHT_ON |     | Obstacle Presence
++--------------+                            +----------------+ ----+ refresh
+       ^                                             |
+       | Optical settle complete                     | Hold Duration expires
+       |                                             v
+       +----------------------------------- +----------------------+
+                                           | STATE_OPTICAL_SETTLE |
+                                           +----------------------+
 ```
 
 ### Optical Feedback Protection (Light Lockout)
 When the primary lamp is activated, light reflection can strike the LDR sensor, causing measured illuminance to surge and falsely indicating daytime. To eliminate rapid ON/OFF oscillation:
 - While in `STATE_LIGHT_ON`, the system applies **Light Lockout**, suspending LDR state evaluation.
-- The lamp state is governed strictly by the countdown timer (Hold Duration) and proximity retriggering.
-- Once the hold duration elapses and the relay opens (lamp turns OFF), LDR sampling resumes after an optical settle period.
+- The lamp state is governed strictly by the countdown timer (Hold Duration) and Obstacle Presence refresh.
+- While Obstacle Presence remains asserted, it refreshes the Hold Duration, so timeout cannot occur until presence clears.
+- Once the hold duration elapses and the relay opens (lamp turns OFF), the system enters `STATE_OPTICAL_SETTLE`; LDR sampling resumes only after the optical settle period. A later Qualified Trigger Event may then activate the lamp again.
 
 ---
 
@@ -80,9 +84,12 @@ sensor-based-smart-light/
 │   └── workflows/
 │       └── pr-check.yml                # CI workflow verifying binaries, linting, & syntax
 ├── .gitignore                          # Excludes build artifacts (Debug/, *.elf, *.hex)
+├── AGENTS.md                           # Agent workflow and documentation pointers
 ├── README.md                           # System documentation and wiring guide
 ├── GLOSSARY.md                         # Ubiquitous domain language definitions
 ├── docs/
+│   ├── agents/                         # Issue-tracker, labels, and domain-doc conventions
+│   ├── team-work-plan.md               # 3-person phases, ownership, and workflow
 │   └── adr/
 │       └── 0001-target-nucleo-f411re.md  # Architectural decision record for MCU selection
 └── (STM32CubeIDE project files: .ioc, Core/, Drivers/ generated via STM32CubeMX)
@@ -110,3 +117,4 @@ sensor-based-smart-light/
 ## 📚 References & Decisions
 - Domain Glossary: [GLOSSARY.md](GLOSSARY.md)
 - Architectural Decision Records: [docs/adr/0001-target-nucleo-f411re.md](docs/adr/0001-target-nucleo-f411re.md)
+- Team Work Plan: [docs/team-work-plan.md](docs/team-work-plan.md)
