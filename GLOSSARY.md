@@ -17,5 +17,9 @@ A protective state that suspends ambient light evaluation while the primary illu
 _Avoid_: Sensor masking, blind mode
 
 **Hold Duration**:
-The time interval the illumination load remains continuously energized after the latest qualified trigger event before automatic cutoff.
+The time interval the illumination load remains continuously energized after the latest Qualified Trigger Event or Obstacle Presence refresh before automatic cutoff.
 _Avoid_: Delay time, sleep time
+
+**Qualified Trigger Event**:
+The simultaneous observation of Ambient Darkness and Obstacle Presence while the illumination load is de-energized. While the load is energized, Obstacle Presence refreshes the Hold Duration rather than creating another trigger event.
+_Avoid_: Motion event, sensor interrupt
