@@ -19,3 +19,7 @@ _Avoid_: Sensor masking, blind mode
 **Hold Duration**:
 The time interval the illumination load remains continuously energized after the latest qualified trigger event before automatic cutoff.
 _Avoid_: Delay time, sleep time
+
+**Remote Override**:
+An external command from an operator or networked interface that forces the illumination load on or off independently of local sensor triggers.
+_Avoid_: Manual force, Wi-Fi switch
